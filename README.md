@@ -28,3 +28,7 @@ to update /etc/hosts
 Then, make a snapshot to avoid rebuilding the all thing
 
     vagrant snapshot save base
+
+Is Ansible working ?
+
+    ansible -i host.vagrant dockers -m ping
