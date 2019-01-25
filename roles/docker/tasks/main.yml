@@ -1,0 +1,28 @@
+# Source https://docs.docker.com/install/linux/docker-ce/debian/
+
+# Ensure some packages and update
+- name: Ensure packages
+  apt:
+    name: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg2', 'software-properties-common']
+    state: latest
+    update_cache: yes
+
+# Add docker GPG key
+- name: Add docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    state: present
+
+# Ensure docker repository in apt
+- name: Ensure docker repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
+    state: present
+    filename: docker
+
+# Ensure docker-ce package
+- name: Ensure docker-ce pkg
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: yes

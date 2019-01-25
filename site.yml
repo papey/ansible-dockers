@@ -1,0 +1,4 @@
+- hosts: dockers
+  roles:
+    - role: docker
+      tags: docker
