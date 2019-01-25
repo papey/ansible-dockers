@@ -4,6 +4,11 @@
 
 Setup multiple docker daemons on the same host, using Ansible
 
+## Requirements
+
+- Vagrant
+- Ansible
+
 ## Setup
 
 Spwan the vm :
