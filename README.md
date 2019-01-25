@@ -17,7 +17,7 @@ Spwan the vm :
 
 Test it :
 
-    ssh root@ansible-dockers.example.com echo "Hello from $(hostname)"
+    ssh root@ansible-dockers.example.com echo 'Hello from $(hostname)'
 
 If host is not found, run
 
