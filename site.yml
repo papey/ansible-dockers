@@ -2,3 +2,5 @@
   roles:
     - role: docker
       tags: docker
+    - role: multiply
+      tags: multiply

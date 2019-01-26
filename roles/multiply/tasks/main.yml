@@ -1,0 +1,6 @@
+# Disable standard docker
+- name: Ensure standard docker is off and disable
+  systemd:
+    name: docker.service
+    state: stopped
+    enabled: false
