@@ -32,3 +32,7 @@ Then, make a snapshot to avoid rebuilding the all thing
 Is Ansible working ?
 
     ansible -i host.vagrant dockers -m ping
+
+## Deploy
+
+    ansible-playbook -i host.vagrant site.yml
