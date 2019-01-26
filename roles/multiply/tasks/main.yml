@@ -4,3 +4,15 @@
     name: docker.service
     state: stopped
     enabled: false
+
+# Push an argument (@) systemd unit
+- name: Push agument systemd unit
+  copy:
+    src: docker@.service
+    dest: /etc/systemd/system/docker@.service
+
+- name: Ensure daemon-reload
+  systemd:
+    daemon_reload: yes
+
+- include_tasks: network.yml

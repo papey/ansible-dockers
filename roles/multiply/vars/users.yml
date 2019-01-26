@@ -1,0 +1,10 @@
+---
+users:
+  bob:
+    ip: 172.18.0.1
+    mask: 16
+    name: bob
+  alice:
+    ip: 172.19.0.1
+    mask: 16
+    name: alice

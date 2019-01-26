@@ -1,0 +1,19 @@
+# Get vars
+- name: Include users dict
+  include_vars:
+    file: vars/users.yml
+
+# Push netdev template file for bridge
+- name: Push NetDev file for each users
+  template:
+    src: bridge.netdev.j2
+    dest: /etc/systemd/network/{{ item.value.name }}.netdev
+  with_dict: '{{ users }}'
+  notify: restart networkd
+
+- name: Push Network file for each users
+  template:
+    src: bridge.network.j2
+    dest: /etc/systemd/network/{{ item.value.name }}.network
+  with_dict: '{{ users }}'
+  notify: restart networkd
