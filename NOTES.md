@@ -291,3 +291,73 @@ vs.db, err = bolt.Open(filepath.Join(volPath, "metadata.db"), 0600, &bolt.Option
 This explains why it's not possible to use the same data-root for multiple
 docker deamons. This a not like a relational DB, lock mechanisms are
 mandatory to ensure integrity of every piece of data.
+
+##### Docker, i'm not foolish, i'm clever
+
+Let's try something funny.
+
+Consider the docker.service, the master docker service and docker@.service,
+slave services
+
+```
+systemctl stop docker@bob.service docker@alice.service
+systemctl start docker.service
+docker pull golang
+```
+
+In order to pull the golang image from the master.
+
+Is it possible to share master's images to slaves daemons ?
+
+Let's try something with overlay. As a remember note, to create a union mount
+point using overlay :
+
+
+```shell
+mount -t overlay overlay -o lowerdir=/lower,upperdir=/upper,workdir=/work /merged
+```
+
+where lowerdir is **ro**, upperdir is **rw**, workdir is an **empty directory on the same filesystem mount as the upper directory**
+
+```shell
+cd /var/lib/docker/bob.data # this is the bob data dir
+mv image ../bob.image # move old images to new location
+mkdir bob.work # workdir of the overlay mount
+mount -t overlay overlay -o lowerdir=/var/lib/docker/image,upperdir=/var/lib/docker/bob.image,workdir=/var/lib/docker/bob.work /var/lib/docker/bob.data/image
+```
+
+Restart Bob in order to have a quick look on images
+
+```shell
+systemctl start docker@bob.service
+docker -H unix:///var/run/docker-bob.sock image ls
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+idocker image pull golang
+Using default tag: latest
+latest: Pulling from library/golang
+Digest: sha256:6486ea568f95953b86c9687c1e656f4297d9b844481e645a00c0602f26fee136
+Status: Image is up to date for golang:latest
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+golang              latest              5049ec6e3141        5 days ago          816MB
+```
+
+The golang image pull takes less than a second, since every layer is in the master
+data-root, _/var/lib/docker/image_
+
+Doing the same with docker@alice.service gives similar results.
+
+With this setup, if Alice pull a specific image, Bob will not be able to see it
+
+```shell
+docker -H unix:///var/run/docker-alice.sock pull alpine
+Using default tag: latest
+latest: Pulling from library/alpine
+cd784148e348: Pull complete
+Digest: sha256:46e71df1e5191ab8b8034c5189e325258ec44ea739bba1e5645cff83c9048ff1
+Status: Downloaded newer image for alpine:latest
+docker -H unix:///var/run/docker-bob.sock image ls
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+golang              latest              5049ec6e3141        5 days ago          816MB
+```
+
+Q.E.D
