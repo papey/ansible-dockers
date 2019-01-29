@@ -245,3 +245,49 @@ alpine              latest              3f53bb00af94        5 weeks ago         
 ```
 
 Looks like there is some lockup mechanism.
+
+Let's dig inside docker-ce source code (git grep <3). In the file
+_components/engine/volume/service/store.go_ :
+
+```go
+		var err error
+		vs.db, err = bolt.Open(filepath.Join(volPath, "metadata.db"), 0600, &bolt.Options{Timeout: 1 * time.Second})
+		if err != nil {
+			return nil, errors.Wrap(err, "error while opening volume store metadata database")
+		}
+```
+
+bolt, wtf is this ?
+
+```go
+	bolt "go.etcd.io/bbolt"
+```
+
+##### Bbolt
+
+[Bbolt](https://github.com/etcd-io/bbolt) is a key/value store engine.
+Usefull when a full database is not needed.
+
+And here [comes the lock](https://github.com/etcd-io/bbolt#opening-a-database) !
+
+```
+Please note that Bolt obtains a file lock on the data file so multiple
+processes cannot open the same database at the same time. Opening an already
+open Bolt database will cause it to hang until the other process closes it.
+To prevent an indefinite wait you can pass a timeout option to the Open()
+function:
+```
+
+```go
+db, err := bolt.Open("my.db", 0600, &bolt.Options{Timeout: 1 * time.Second})
+```
+
+And inside docker-ce code :
+
+```go
+		vs.db, err = bolt.Open(filepath.Join(volPath, "metadata.db"), 0600, &bolt.Options{Timeout: 1 * time.Second})
+```
+
+This explains why it's not possible to use the same data-root for multiple
+docker deamons. This a not like a relational DB, lock mechanisms are
+mandatory to ensure integrity of every piece of data.
