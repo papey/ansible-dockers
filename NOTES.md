@@ -250,17 +250,17 @@ Let's dig inside docker-ce source code (git grep <3). In the file
 _components/engine/volume/service/store.go_ :
 
 ```go
-		var err error
-		vs.db, err = bolt.Open(filepath.Join(volPath, "metadata.db"), 0600, &bolt.Options{Timeout: 1 * time.Second})
-		if err != nil {
-			return nil, errors.Wrap(err, "error while opening volume store metadata database")
-		}
+var err error
+vs.db, err = bolt.Open(filepath.Join(volPath, "metadata.db"), 0600, &bolt.Options{Timeout: 1 * time.Second})
+if err != nil {
+    return nil, errors.Wrap(err, "error while opening volume store metadata database")
+}
 ```
 
 bolt, wtf is this ?
 
 ```go
-	bolt "go.etcd.io/bbolt"
+bolt "go.etcd.io/bbolt"
 ```
 
 ##### Bbolt
@@ -285,7 +285,7 @@ db, err := bolt.Open("my.db", 0600, &bolt.Options{Timeout: 1 * time.Second})
 And inside docker-ce code :
 
 ```go
-		vs.db, err = bolt.Open(filepath.Join(volPath, "metadata.db"), 0600, &bolt.Options{Timeout: 1 * time.Second})
+vs.db, err = bolt.Open(filepath.Join(volPath, "metadata.db"), 0600, &bolt.Options{Timeout: 1 * time.Second})
 ```
 
 This explains why it's not possible to use the same data-root for multiple
