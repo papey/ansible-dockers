@@ -244,7 +244,7 @@ nginx               latest              42b4762643dc        5 days ago          
 alpine              latest              3f53bb00af94        5 weeks ago         4.41MB
 ```
 
-Looks like there is some lockup mechanism.
+Looks like there is some lockup mechanism with volumes stuff.
 
 Let's dig inside docker-ce source code (git grep <3). In the file
 _components/engine/volume/service/store.go_ :
