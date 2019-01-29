@@ -361,3 +361,13 @@ golang              latest              5049ec6e3141        5 days ago          
 ```
 
 Q.E.D
+
+##### Limitations
+
+- Removing an image on master will throw error from slaves
+
+- Pulling an image from slave, delete it, pull it via master (without restarting anything) will throw errors
+
+This is in fact due to multiple daemons using a shared part of the image
+directory. For exemple, if something is done on the master part, states files
+of slaves are not updated.
