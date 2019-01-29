@@ -332,7 +332,7 @@ Restart Bob in order to have a quick look on images
 systemctl start docker@bob.service
 docker -H unix:///var/run/docker-bob.sock image ls
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-idocker image pull golang
+docker image pull golang
 Using default tag: latest
 latest: Pulling from library/golang
 Digest: sha256:6486ea568f95953b86c9687c1e656f4297d9b844481e645a00c0602f26fee136
