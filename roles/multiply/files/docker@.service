@@ -8,6 +8,9 @@ Requires=docker.socket
 
 [Service]
 Type=notify
+# Ensure bridge
+# the - ensure that error code is not checked
+ExecStartPre=-/usr/local/bin/jb add %i 127.17.0.1/16
 # the default is not to use systemd for cgroups because the delegate issues still
 # exists and systemd currently does not support the cgroup feature set required
 # for containers run by docker

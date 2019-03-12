@@ -1,0 +1,8 @@
+
+jb:
+  path: /root/go/src/github.com/papey/jeff-bridges
+  url: https://github.com/papey/jeff-bridges.git
+  version: v0.0.1
+
+go:
+  path: /root/go

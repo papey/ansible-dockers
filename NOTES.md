@@ -52,6 +52,26 @@ systemctl restart systemd-networkd
 
 New bridge appears !
 
+
+#### Enhancement : Jeff Bridges, ftw !
+
+1 user == 2 systemd-networkd files, this will not scale well.
+
+So it's time to go for [jeff-bridges](https://github.com/papey/jeff-bridges) !
+
+This is a small go tool I created used to create bridges.
+
+The best way to call this tool is to used ExecStartPre in the docker@.service
+
+```
+# Ensure bridge
+# the - ensure that error code is not checked
+ExecStartPre=-/usr/local/bin/jb add %i 127.17.0.1/16
+```
+
+With this, each time a new specific service is started, jeff-bridges will
+create a dedicated bridge for it.
+
 ### Data-dir, exec-dir, socket & pidfile
 
 All those arguments are files or directories created by the docker daemon if

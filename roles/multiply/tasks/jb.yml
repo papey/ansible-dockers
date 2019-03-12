@@ -1,0 +1,46 @@
+# Add jeff-bridges into the mix
+
+# Ensure golang
+- name: Ensure golang pkg
+  apt:
+    name: ['golang']
+    state: latest
+    update_cache: yes
+
+# Ensure godep
+- name: Ensure dep
+  get_url:
+    url: https://github.com/golang/dep/releases/download/v0.5.1/dep-linux-amd64
+    dest: /usr/local/bin/dep
+    mode: +x
+
+# Clone jeff-bridges code
+- name: Clone jeff-bridges
+  git:
+    repo: https://github.com/papey/jeff-bridges.git
+    dest: "{{ jb.path }}"
+    version: v0.0.1
+
+# Ensure deps
+- name: Ensure jeff-bridges deps
+  command: dep ensure
+  environment:
+    GOPATH: "{{ go.path }}"
+  args:
+    chdir: "{{ jb.path }}"
+
+# Build
+- name: Build jeff-bridges
+  command: go build jb.go
+  environment:
+    GOPATH: "{{ go.path }}"
+  args:
+    chdir: "{{ jb.path }}/cmd"
+
+# Put the shit inside /usr/local/bin
+- name: Put jb bin to local bin
+  copy:
+    src: "{{ jb.path }}/cmd/jb"
+    dest: /usr/local/bin/jb
+    mode: +x
+    remote_src: yes
