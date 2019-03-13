@@ -36,3 +36,7 @@ Is Ansible working ?
 ## Deploy
 
     ansible-playbook -i host.vagrant site.yml
+
+## Usage and build process
+
+See github wiki associated
