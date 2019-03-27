@@ -80,7 +80,7 @@ Vagrant.configure("2") do |config|
     vb.cpus = 1
 
     # IP
-    override.vm.network :private_network, ip: "192.142.42.42"
+    override.vm.network :private_network, ip: "192.168.42.42"
 
   end
 
